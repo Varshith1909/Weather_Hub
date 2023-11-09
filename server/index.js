@@ -1,46 +1,71 @@
 require('dotenv').config();
-const secret = process.env.SECRET_KEY
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { Pool } = require('pg');
 
 const app = express();
 const PORT = 5000;
 
 app.use(express.json());
 
-const users = [];
-
-app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    users.push({ username, password:hashedPassword });
-
-    res.status(201).send({ message: "User registered" });
+const pool = new Pool({
+	user: process.env.DB_USER,
+	host: process.env.DB_HOST,
+	database: process.env.DB_NAME,
+	password: process.env.DB_PASSWORD,
+	port: process.env.DB_PORT,
 });
 
-app.post('./login', async(req,res) => {
-    const {username, password} = req.body;
+const secret = process.env.SECRET_KEY;
 
-    const user = users.find(u => u.username === username);
+app.post('/register', async (req, res) => {
+	try {
+		const { username, password } = req.body;
 
-    if(!user){
-        return res.status(400).send({message:"Invalid credentials"});
-    }
+		if (!username || !password) {
+			return res.status(400).send({ message: "Both username and password are required." });
+		}
 
-    const validPassword = await bcrypt.compare(password, user.password);
+		const hashedPassword = await bcrypt.hash(password, 10);
 
-    if(!validPassword){
-        return res.status(400).send({message:"Invalid Password"});
-    }
+		pool.query(`INSERT INTO users(username, password) VALUES($1, $2) RETURNING id`, [username, hashedPassword], (err, results) => {
+			if (err) {
+				return res.status(400).send({ message: "Error registering user", error: err.message });
+			}
+			res.status(201).send({ message: "User registered", userId: results.rows[0].id });
+		});
+	} catch (error) {
+		res.status(500).send({ message: error.message });
+	}
+});
 
-    const token = jwt.sign({ username: user.username }, secret , { expiresIn: '1h' });
+app.post('/login', async (req, res) => {
+	try {
+		const { username, password } = req.body;
 
-    res.send({ message: "Logged in sucessfully!!!", token });
+		if (!username || !password) {
+			return res.status(400).send({ message: "Both username and password are required." });
+		}
+
+		pool.query(`SELECT password FROM users WHERE username = $1`, [username], async (err, results) => {
+			if (err || results.rows.length === 0) {
+				return res.status(400).send({ message: "Invalid credentials" });
+			}
+
+			const validPassword = await bcrypt.compare(password, results.rows[0].password);
+			if (!validPassword) {
+				return res.status(400).send({ message: "Invalid Password" });
+			}
+
+			const token = jwt.sign({ username: username }, secret, { expiresIn: '1h' });
+			res.send({ message: "Logged in successfully!!!", token });
+		});
+	} catch (error) {
+		res.status(500).send({ message: error.message });
+	}
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-})
+	console.log(`Server is running on port ${PORT}`);
+});
