@@ -1,7 +1,7 @@
-import logo from './logo.svg';
-import homepage from './pages/homepage';
 import './App.css';
 import Login from './Login';
+import Navbar from './components/navbar';
+import Home from './pages/homepage'
 
 function App() {
   return (
@@ -9,8 +9,8 @@ function App() {
       <header className="App-header">
         <Login />
       </header>
-      {/* <Navbar />
-      <Home /> */}
+      <Navbar />
+      <Home />
     </div>
   );
 }
