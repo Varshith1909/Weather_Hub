@@ -11,25 +11,20 @@ const Login = () => {
       const response = await axios.post('http://localhost:5000/login', formData);
       const token = response.data.token;
 
-      // Store the token in local storage
       localStorage.setItem('jwtToken', token);
+      console.log('Logged in successfully!!!');
 
-      // Navigate to a protected route or take other actions here
     } catch (error) {
-      console.error("Error logging in:", error);
+      console.error("Error logging in:", error.response ? error.response.data : error);
     }
   };
 
-  // Define the useEffect hook at the top level of the component
   useEffect(() => {
-    // Check for a token in local storage
     const token = localStorage.getItem('jwtToken');
 
     if (token) {
-      // User is logged in, you can take appropriate actions here.
       console.log('User is logged in');
     } else {
-      // User is not logged in, redirect to the login page or display the login form.
       console.log('User is not logged in');
     }
   }, []);
