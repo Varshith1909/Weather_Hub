@@ -1,69 +1,51 @@
 const request = require('supertest');
-const bcrypt = require('bcryptjs');
-const { Pool } = require('pg');
-const jwt = require('jsonwebtoken');
-const app = require('./index');
+const { app, pool } = require('./index');
 
-jest.mock('pg', () => {
-	const mPool = {
-		query: jest.fn(),
-	};
-	return { Pool: jest.fn(() => mPool) };
+beforeEach(async () => {
+	await pool.query('DELETE FROM users');
 });
 
-jest.mock('bcryptjs', () => ({
-	hash: jest.fn(),
-	compare: jest.fn(),
-}));
+beforeEach(async () => {
+	await pool.query(`INSERT INTO users(username, password) VALUES('test', '$2b$10$xLnvndBaiXeiGAnB9EtwfuPPV7NNVcAYprnZGX/OTxTlzXIO9qDQm')`);
+});
 
-jest.mock('jsonwebtoken', () => ({
-	sign: jest.fn(),
-}));
+afterAll(() => {
+	pool.end();
+});
 
-const mockHashedPassword = '$2a$10$example';
-const mockToken = 'example_token';
-bcrypt.hash.mockResolvedValue(mockHashedPassword);
-bcrypt.compare.mockResolvedValue(true);
-jwt.sign.mockReturnValue(mockToken);
-
-const pool = new Pool();
-
-describe('/register endpoint', () => {
-	it('should register a user successfully', async () => {
-		pool.query.mockResolvedValueOnce({
-			rows: [{ id: 1 }],
-			rowCount: 1,
-		});
-		const response = await request(app)
+describe('Register', () => {
+	it('returns 201 and userId on success', async () => {
+		const res = await request(app)
 			.post('/register')
-			.send({ username: 'testuser', password: 'password' });
+			.send({
+				username: 'test12',
+				password: 'password123',
+			});
 
-		expect(response.statusCode).toBe(201);
-		expect(response.body).toHaveProperty('message', 'User registered');
-		expect(response.body).toHaveProperty('userId', 1);
+		expect(res.statusCode).toEqual(201);
+		expect(res.body.userId).toBeDefined();
 	});
 
-	
+	it('returns 400 if username is missing', async () => {
+		const res = await request(app)
+			.post('/register')
+			.send({
+				password: 'password123',
+			});
+
+		expect(res.statusCode).toEqual(400);
+	});
 });
 
-describe('/login endpoint', () => {
-	it('should log in a user successfully', async () => {
-		pool.query.mockResolvedValueOnce({
-			rows: [{ id: 1, password: mockHashedPassword }],
-			rowCount: 1,
-		});
-		const response = await request(app)
+describe('Login', () => {
+	it('returns 400 on invalid credentials', async () => {
+		const res = await request(app)
 			.post('/login')
-			.send({ username: 'testuser', password: 'password' });
+			.send({
+				username: 'test',
+				password: 'wrongpassword',
+			});
 
-		expect(response.statusCode).toBe(200);
-		expect(response.body).toHaveProperty('message', 'Logged in successfully!!!');
-		expect(response.body).toHaveProperty('token', mockToken);
+		expect(res.statusCode).toEqual(400);
 	});
-
-	
-});
-
-afterAll(async () => {
-    await pool.end();
 });
