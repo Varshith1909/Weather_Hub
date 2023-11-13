@@ -8,7 +8,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5000/login', formData);
+      const response = await axios.post('http://localhost:5001/login', formData);
       const token = response.data.token;
 
       localStorage.setItem('jwtToken', token);
