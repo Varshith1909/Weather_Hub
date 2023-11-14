@@ -1,19 +1,28 @@
 import './App.css';
 import Login from './Login';
+import {
+	BrowserRouter as Router,
+	Routes as Switch,
+	Route,
+	Redirect,
+} from 'react-router-dom';
 import Navbar from './components/navbar';
 import Home from './pages/homepage'
 import Footer from './components/footer'
 
 function App() {
-  return (
+  return ( 
+    <Router>
     <div className="App">
-      <header className="App-header">
-        <Login />
-      </header>
       <Navbar />
-      <Home />
+      <Switch>
+          <Route exact path="/" element={<Home />} />
+          <Route exact path="/forecast" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+      </Switch>
       <Footer />
     </div>
+    </Router>
   );
 }
 
