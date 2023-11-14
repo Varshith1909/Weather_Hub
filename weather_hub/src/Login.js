@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import "./Login.css"
 import axios from 'axios';
 
 const Login = () => {
@@ -35,7 +36,7 @@ const Login = () => {
   }, []);
 
   return (
-    <div>
+    <div className='logindiv'>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -50,6 +51,7 @@ const Login = () => {
           placeholder="Password"
         />
         <button type="submit">Login</button>
+        <button type="submit">Sign Up</button>
       </form>
     </div>
   );
