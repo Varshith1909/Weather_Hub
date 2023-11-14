@@ -6,7 +6,7 @@ const { Pool } = require('pg');
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
@@ -23,29 +23,36 @@ const secret = process.env.SECRET_KEY;
 
 app.post('/register', async (req, res) => {
 	try {
-		const { username, password } = req.body;
-		if (!username || !password) {
-			return res.status(400).send({ message: "Both username and password are required." });
-		}
+		const { name, email, username, password, confirmPassword } = req.body;
+		if (!email || !username || !name || !password || !confirmPassword) {
+            return res.status(400).send({ message: "All fields are required." });
+        }
+		if (password !== confirmPassword) {
+            return res.status(400).send({ message: "Passwords do not match." });
+        }
 		const hashedPassword = await bcrypt.hash(password, 10);
-		pool.query(`INSERT INTO users(username, password) VALUES($1, $2) RETURNING id`, [username, hashedPassword], (err, results) => {
-			if (err) {
-				return res.status(400).send({ message: "Error registering user", error: err.message });
-			}
-			res.status(201).send({ message: "User registered", userId: results.rows[0].id });
-		});
-	} catch (error) {
-		res.status(500).send({ message: error.message });
-	}
+		const queryText = `INSERT INTO users(email, username, name, password) VALUES($1, $2, $3, $4) RETURNING id`;
+        pool.query(queryText, [email, username, name, hashedPassword], (err, results) => {
+            if (err) {
+                return res.status(400).send({ message: "Error registering user", error: err.message });
+            }
+            res.status(201).send({ message: "User registered", userId: results.rows[0].id });
+        });
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
 });
 
 app.post('/login', async (req, res) => {
 	try {
-		const { username, password } = req.body;
-		if (!username || !password) {
+		const { login, password } = req.body;
+		if (!login || !password) {
 			return res.status(400).send({ message: "Both username and password are required." });
 		}
-		pool.query(`SELECT id, password FROM users WHERE username = $1`, [username], async (err, results) => {
+
+		const querylogin = `SELECT id, password FROM users WHERE username = $1 OR email = $1` 
+
+		pool.query(querylogin, [login], async (err, results) => {
 			if (err) {
 				console.error('Database error:', err);
 				return res.status(500).send({ message: "Server error" });
@@ -57,7 +64,7 @@ app.post('/login', async (req, res) => {
 			if (!validPassword) {
 				return res.status(400).send({ message: "Invalid Password" });
 			}
-			const token = jwt.sign({ username: username }, secret, { expiresIn: '1h' });
+			const token = jwt.sign({ login: login }, secret, { expiresIn: '1h' });
 			res.send({ message: "Logged in successfully!!!", token });
 		});
 	} catch (error) {

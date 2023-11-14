@@ -3,13 +3,13 @@ import "./Login.css"
 import axios from 'axios';
 
 const Login = () => {
-  const [formData, setFormData] = useState({ username: '', password: '' });
+  const [formData, setFormData] = useState({ login: '', password: '' });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5001/login', formData);
+      const response = await axios.post('http://localhost:5000/login', formData);
       const token = response.data.token;
 
       localStorage.setItem('jwtToken', token);
@@ -35,8 +35,8 @@ const Login = () => {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          value={formData.username}
-          onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+          value={formData.login}
+          onChange={(e) => setFormData({ ...formData, login: e.target.value })}
           placeholder="Username"
         />
         <input
