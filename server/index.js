@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Pool } = require('pg');
 const cors = require('cors');
+const axios = require('axios');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -71,6 +72,19 @@ app.post('/login', async (req, res) => {
 		console.error('Login error:', error);
 		res.status(500).send({ message: "Server error" });
 	}
+});
+
+app.get('/weather', async(req, res) => {
+    try {
+        const city = req.query.city;
+        const apiKey = '923d2efda0d24a458d564d47e50ddbf9';
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
+
+        const response = await axios.get(url);
+        res.json(response.data)
+    }catch (err){
+        res.status(500).send('Error fetching Data');
+    }
 });
 
 if (process.env.NODE_ENV !== 'test') {
