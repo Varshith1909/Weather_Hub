@@ -8,6 +8,7 @@ import {
 } from 'react-router-dom';
 import Navbar from './components/navbar';
 import Home from './pages/homepage'
+import Forecast from './pages/forecast'
 import Footer from './components/footer'
 
 function App() {
@@ -17,7 +18,7 @@ function App() {
       <Navbar />
       <Switch>
           <Route exact path="/" element={<Home />} />
-          <Route exact path="/forecast" element={<Home />} />
+          <Route exact path="/forecast" element={<Forecast />} />
           <Route path="/login" element={<Login />} />
       </Switch>
       <Footer />
