@@ -7,4 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
   password VARCHAR(255) NOT NULL
 );
 
+INSERT INTO users (name, email, password)
+VALUES ('test', 'test@example.com', 'test@123');
+
 COMMIT;

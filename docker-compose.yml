@@ -24,13 +24,26 @@ services:
 
   frontend:
     build:
-      context: ./weatherhub
+      context: ./weather_hub
     ports:
-      - "3000:3000"
+      - "6000:3000"
     depends_on:
-      - server
+      - backend
     networks:
       - weather_hub_network
+  
+  nginx:
+    build: 
+      context: ./nginx
+    restart: always
+    tty: true
+    ports: 
+      - "8000:80"
+    networks: 
+      - weather_hub_network
+    depends_on:
+       - backend
+       - frontend
 
 networks:
   weather_hub_network:

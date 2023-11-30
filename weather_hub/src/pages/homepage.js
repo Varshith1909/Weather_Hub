@@ -9,10 +9,8 @@ function Home() {
 
   const getCityData = async (cityName) => {
     try {
-      // Replace 'YOUR_API_KEY' with your actual OpenWeatherMap API key
-      const apiKey = '923d2efda0d24a458d564d47e50ddbf9';
-      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}`;
-      const response = await fetch(apiUrl);
+      const backendApiUrl = `/api/weather?city=${cityName}`;
+      const response = await fetch(backendApiUrl);
       const data = await response.json();
       return data;
     } catch (error) {
@@ -22,9 +20,9 @@ function Home() {
 	const getLocalTime = (offset,inputTime) => {
 		try {
 			const now = new Date(inputTime);
-			const utcOffset = now.getTimezoneOffset() * 60; // Convert minutes to seconds
+			const utcOffset = now.getTimezoneOffset() * 60;
 			const cityOffset = offset;
-			const localTime = now.getTime() + (utcOffset + cityOffset) * 1000; // Multiply by 1000 to convert seconds to milliseconds
+			const localTime = now.getTime() + (utcOffset + cityOffset) * 1000;
 			const cityTime = new Date(localTime);
 			return cityTime;
 		} catch (err) {

@@ -11,7 +11,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/login",
+        "/api/login",
         formData,
       );
       const token = response.data.token;
@@ -29,7 +29,7 @@ const Login = () => {
   const handleGoogleLogin = async (googleData) => {
     try {
       const { tokenId } = googleData;
-      const { data } = await axios.post("http://localhost:5000/google-login", {
+      const { data } = await axios.post("/api/google-login", {
         tokenId: tokenId,
       });
 
