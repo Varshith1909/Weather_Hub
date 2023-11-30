@@ -9,7 +9,7 @@ function Home() {
 
   const getCityData = async (cityName) => {
     try {
-      const backendApiUrl = `http://localhost:5000/weather?city=${cityName}`;
+      const backendApiUrl = `/api/weather?city=${cityName}`;
       const response = await fetch(backendApiUrl);
       const data = await response.json();
       return data;

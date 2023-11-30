@@ -8,7 +8,7 @@ function Forecast() {
 
   const getForecastData = async (cityName) => {
     try {
-      const backendApiUrl = `http://localhost:5001/forecast?city=${cityName}`;
+      const backendApiUrl = `/api/forecast?city=${cityName}`;
       const response = await fetch(backendApiUrl);
       const data = await response.json();
       return data;
