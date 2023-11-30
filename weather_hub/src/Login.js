@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "./Login.css"
+import "./SignUp"
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 const Login = () => {
@@ -46,7 +48,7 @@ const Login = () => {
           placeholder="Password"
         />
         <button type="submit">Login</button>
-        <button type="submit">Sign Up</button>
+        <Link to="/signup"><button>Sign Up</button></Link> 
       </form>
     </div>
   );
