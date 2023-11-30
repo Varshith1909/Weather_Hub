@@ -165,6 +165,32 @@ app.get('/api/weather', async(req, res) => {
     }
 });
 
+app.get('/weather', async(req, res) => {
+    try {
+        const city = req.query.city;
+        const apiKey = '923d2efda0d24a458d564d47e50ddbf9';
+        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
+
+        const response = await axios.get(url);
+        res.json(response.data)
+    }catch (err){
+        res.status(500).send('Error fetching weather Data');
+    }
+});
+
+app.get('/forecast', async(req, res) => {
+    try {
+        const city = req.query.city;
+        const apiKey = '923d2efda0d24a458d564d47e50ddbf9';
+        const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`
+
+        const response = await axios.get(url);
+        res.json(response.data)
+    }catch (err){
+        res.status(500).send('Error fetching forecast Data');
+    }
+});
+
 if (process.env.NODE_ENV !== 'test') {
 	app.listen(PORT, () => {
 		console.log(`Server is running on port ${PORT}`);
