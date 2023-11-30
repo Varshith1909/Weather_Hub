@@ -9,6 +9,7 @@ import {
 import Navbar from './components/navbar';
 import Home from './pages/homepage'
 import Footer from './components/footer'
+import SignUp from './SignUp'
 
 function App() {
   return ( 
@@ -19,6 +20,7 @@ function App() {
           <Route exact path="/" element={<Home />} />
           <Route exact path="/forecast" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
       </Switch>
       <Footer />
     </div>
