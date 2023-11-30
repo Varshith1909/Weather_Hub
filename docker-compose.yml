@@ -24,11 +24,11 @@ services:
 
   frontend:
     build:
-      context: ./weatherhub
+      context: ./weather_hub
     ports:
       - "3000:3000"
     depends_on:
-      - server
+      - backend
     networks:
       - weather_hub_network
 
