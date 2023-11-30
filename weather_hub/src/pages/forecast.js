@@ -65,7 +65,7 @@ function Forecast() {
         <div className="forecast-blocks">
           {forecastData.list.slice(0, 8).map((forecastItem) => (
             <div key={forecastItem.dt} className="forecast-block">
-              <p>{`${new Date(forecastItem.dt_txt).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`}</p>
+              <p>{new Date(forecastItem.dt*1000).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</p>
               <p>{`${Math.floor(forecastItem.main.temp - 273.15)} °C`}</p>
               <p>{`${forecastItem.weather[0].description}`}</p>
               <hr />
