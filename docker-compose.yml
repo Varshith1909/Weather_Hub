@@ -1,0 +1,37 @@
+version: '3'
+services:
+  postgres:
+    build: 
+      context: ./postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: logins
+    ports:
+      - "5432:5432"
+    networks:
+      - weather_hub_network
+
+  backend:
+    build:
+      context: ./server
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    networks:
+      - weather_hub_network
+
+  frontend:
+    build:
+      context: ./weather_hub
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - weather_hub_network
+
+networks:
+  weather_hub_network:
+    driver: bridge
