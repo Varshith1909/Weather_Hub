@@ -1,9 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import "./Login.css"
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import "./Login.css";
+import { Link } from 'react-router-dom';
 const Login = () => {
   const [formData, setFormData] = useState({ login: '', password: '' });
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      navigate('/'); // Redirect to home page if already logged in
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,7 +23,7 @@ const Login = () => {
 
       localStorage.setItem('jwtToken', token);
       console.log('Logged in successfully!!!');
-
+      navigate('/')
     } catch (error) {
       console.error("Error logging in:", error.response ? error.response.data : error);
     }
@@ -46,7 +55,7 @@ const Login = () => {
           placeholder="Password"
         />
         <button type="submit">Login</button>
-        <button type="submit">Sign Up</button>
+        <Link to="/signup"><button>Sign Up</button></Link> 
       </form>
     </div>
   );
