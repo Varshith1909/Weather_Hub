@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import "./Login.css"
 import "./SignUp"
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Login = () => {
   const [formData, setFormData] = useState({ login: '', password: '' });
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,7 +17,7 @@ const Login = () => {
 
       localStorage.setItem('jwtToken', token);
       console.log('Logged in successfully!!!');
-
+      navigate('/')
     } catch (error) {
       console.error("Error logging in:", error.response ? error.response.data : error);
     }

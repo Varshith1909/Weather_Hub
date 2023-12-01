@@ -1,19 +1,31 @@
-// SignUp.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
   const [formData, setFormData] = useState({ name: '', email: '', username: '', password: '', confirmPassword: '' });
+  const [registrationMessage, setRegistrationMessage] = useState('');
+  const [registrationError, setRegistrationError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const response = await axios.post('http://localhost:5000/register', formData);
-      // Handle success - maybe redirect to login or do something else
+      // Handle success
+      setRegistrationMessage('User registered successfully!!!');
       console.log('User registered successfully!!!', response.data);
+      navigate('/')
     } catch (error) {
-      console.error('Error signing up:', error.response ? error.response.data : error);
+      
+      if (error.response && error.response.data) {
+        setRegistrationError(JSON.stringify(error.response.data));
+        console.error('Error signing up:', error.response.data);
+      } else {
+        setRegistrationError(error.message);
+        console.error('Error signing up:', error.message);
+      }
     }
   };
 
@@ -34,6 +46,7 @@ const SignUp = () => {
         <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="Confirm Password" />
         <button type="submit">Sign Up</button>
       </form>
+      {registrationMessage && <p>{registrationMessage}</p>}
     </div>
   );
 };
