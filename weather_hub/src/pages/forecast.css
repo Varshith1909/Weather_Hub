@@ -30,7 +30,6 @@
   .currenttemp{
     color:white;
     font-size: 40px;
-    margin: 0px;
   }
   .forecast-container {
     display: flex;
@@ -41,20 +40,20 @@
   }
   
   .forecast-blocks-container {
-    margin : 100px;
+    margin : 0px;
   }
   
   .forecast-blocks {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
+    
   }
   
   .forecast-block {
-    width: 200px;
+    width: 300px;
     height: 150px; 
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 2px solid white;
     border-radius: 8px;
     text-align: center;
     align-items: center;
