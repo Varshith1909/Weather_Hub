@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import "./Login.css"
-import "./SignUp"
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import "./Login.css";
+import { Link } from 'react-router-dom';
 const Login = () => {
   const [formData, setFormData] = useState({ login: '', password: '' });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      navigate('/'); // Redirect to home page if already logged in
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
